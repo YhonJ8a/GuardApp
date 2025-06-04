@@ -11,7 +11,7 @@ import { Residente } from "./Residente";
 import { Vehiculo } from "./Vehiculo";
 import { Usuario } from "./Usuario";
 
-@Entity("usuarios")
+@Entity("ingresos")
 export class Ingreso extends BaseEntity {
 
     @PrimaryGeneratedColumn("uuid")

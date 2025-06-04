@@ -6,11 +6,12 @@ import dotenv from "dotenv";
 import jwt from 'jsonwebtoken';
 import { Usuario } from "../entities/Usuario";
 import bcrypt from "bcrypt";
-import { log } from "console";
 
 dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY || "secret";
+const SECRET_KEY = process.env.SECRET_KEY || "CALL_ME_SECRETsupersecreta1475675";
+const EXPIRES_IN = Number(process.env.EXPIRES_IN) || 3600;
+const userRepository = AppDataSource.getRepository(Usuario);
 
 export const loginHandler = async (
     req: Request,
@@ -18,6 +19,7 @@ export const loginHandler = async (
 ): Promise<void> => {
     try {
         const { email, password } = req.body;
+
         if (!validateEmail(email)) {
             res.status(400).json({ message: "Email is not valid" });
             return;
@@ -27,13 +29,11 @@ export const loginHandler = async (
             return;
         }
 
-        const user = await AppDataSource.getRepository(Usuario)
-            .createQueryBuilder()
-            .addSelect('Usuario.password')
-            .where("Usuario.email = :email", { email: email })
+        const user = await userRepository
+            .createQueryBuilder('user')
+            .addSelect('user.password')
+            .where("user.email = :email", { email: email })
             .getOne();
-
-        console.log(user);
 
         if (!user || !user.password) {
             res.status(400).json({ message: "user not found" });
@@ -42,7 +42,7 @@ export const loginHandler = async (
         const validPassword = await bcrypt.compare(password, user.password)
         if (!validPassword) { res.status(400).json({ message: "password not valid" }) };
 
-        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: 60 * 60 * 24 });
+        const token = jwt.sign({ id: user.id, email: user.email, admin: user.admin }, SECRET_KEY, { expiresIn: EXPIRES_IN });
 
         res.json({ token, user });
         return
@@ -58,7 +58,7 @@ export const loginHandler = async (
 
 export const signUpHandler = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { nombre, email, password, telefono, identificacion, apellido} = req.body;
+        const { nombre, email, password, telefono, identificacion, apellido } = req.body;
         if (!nombre || !email || !password || !telefono || !identificacion || !apellido) {
             res.status(400).json({ error: "Bad request, missing data" });
             return;
@@ -79,7 +79,6 @@ export const signUpHandler = async (req: Request, res: Response): Promise<void> 
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
-        const userRepository = AppDataSource.getRepository(Usuario);
         const user = new Usuario();
         user.nombre = nombre;
         user.apellido = apellido;
@@ -91,7 +90,6 @@ export const signUpHandler = async (req: Request, res: Response): Promise<void> 
         user.identificacion = identificacion;
         console.log(user);
         const createUser = await userRepository.save(user);
-        console.log("aver :",createUser);
         res.status(201).json({ id: createUser.id });
 
     } catch (error) {
