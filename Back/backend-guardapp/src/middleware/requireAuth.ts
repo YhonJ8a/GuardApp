@@ -26,7 +26,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction): vo
                 res.status(401).json({ message: "Unauthorized" });
                 return;
             }
-            req.body = {usuario: user};
+            req.body = {...req.body, actionuser: user};
             next()
         })
     } catch (error) {

@@ -44,7 +44,7 @@ export const loginHandler = async (
 
         const token = jwt.sign({ id: user.id, email: user.email, admin: user.admin }, SECRET_KEY, { expiresIn: EXPIRES_IN });
 
-        res.json({ token, user });
+        res.json({ token, user: { id: user.id, email: user.email, admin: user.admin, fullname: `${user.nombre} ${user.apellido}` } });
         return
 
 

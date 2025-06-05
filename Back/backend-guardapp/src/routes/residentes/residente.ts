@@ -1,0 +1,37 @@
+import { Router } from "express";
+
+import {
+    allResidentes,
+    allResidentesInactive,
+    getResidente,
+    getResidenteVehiculos,
+    getResidenteIngresos,
+    createResidente,
+    createVehiculoResidente,
+    updateResidente,
+    deleteResidente
+} from "../../controllers/ResidentesController"; 
+
+
+const router = Router()
+
+router.get("/", allResidentes);
+
+router.get("/inactive", allResidentesInactive);
+
+router.get("/:id", getResidente);
+
+router.get("/:id/vehiculos", getResidenteVehiculos);
+
+router.get("/:id/ingresos", getResidenteIngresos);
+
+router.post("/", createResidente);
+
+router.post("/:id/new-vehiculo", createVehiculoResidente);
+
+router.put("/:id", updateResidente);
+
+router.delete("/:id", deleteResidente);
+
+
+export default router;
