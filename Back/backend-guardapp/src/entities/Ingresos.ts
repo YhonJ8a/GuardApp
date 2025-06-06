@@ -32,15 +32,4 @@ export class Ingreso extends BaseEntity {
     @ManyToOne(() => Usuario, usuario => usuario.ingreso)
     usuario!: Usuario;
 
-    @Column({ unique: true })
-    email!: string;
-
-    @Column()
-    estado!: string;
-
-    @Column()
-    admin: boolean = false;
-
-    @Column({ select: false })
-    password!: string;
 }

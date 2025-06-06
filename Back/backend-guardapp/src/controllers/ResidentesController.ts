@@ -4,7 +4,6 @@ import { Residente } from "../entities/Residente";
 import { Vehiculo } from "../entities/Vehiculo";
 
 const resiRepository = AppDataSource.getRepository(Residente);
-const vehiRepository = AppDataSource.getRepository(Vehiculo);
 
 export const allResidentes = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -46,11 +45,32 @@ export const allResidentesInactive = async (req: Request, res: Response): Promis
     }
 }
 
+export const getResidenteCc = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { cc } = req.params;
+        const residentes = await resiRepository.findOne({
+            where: { identificacion: cc }
+        });
+
+        residentes ?
+            res.json(residentes) :
+            res.status(200).json({ message: "No se encontraron residentes con esa cc" });
+
+        return;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log(error);
+            res.status(500).json({ message: error.message });
+        }
+        return;
+    }
+}
+
 export const getResidente = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
         const residente = await resiRepository
-            .findOne({ where: { id: id }});
+            .findOne({ where: { id: id } });
         if (!residente) {
             res.status(404).json({ message: "Residente no encontrado" });
             return;
@@ -88,7 +108,7 @@ export const getResidenteIngresos = async (req: Request, res: Response): Promise
     try {
         const { id } = req.params;
         const residente = await resiRepository
-            .findOne({ where: { id: id }, relations: ['Ingreso'] });
+            .findOne({ where: { id: id }, relations: ['ingresos'] });
         if (!residente) {
             res.status(404).json({ message: "Residente no encontrado" });
             return;
@@ -136,15 +156,15 @@ export const createVehiculoResidente = async (req: Request, res: Response): Prom
             res.status(404).json({ message: "Residente no encontrado" });
             return;
         }
-        const newVehiculo = vehiRepository.create({
+        const newVehiculo = AppDataSource.getRepository(Vehiculo).create({
             placa,
             cateforia,
             registro: new Date(),
             estado: true,
             residente: residente
         });
-        await vehiRepository.save(newVehiculo);
-        const residenteFin = await resiRepository.findOne({ where: { id: id }, relations: ['Ingreso']  });
+        await AppDataSource.getRepository(Vehiculo).save(newVehiculo);
+        const residenteFin = await resiRepository.findOne({ where: { id: id }, relations: ['vehiculos'] });
         res.status(201).json(residenteFin);
     } catch (error) {
         if (error instanceof Error) {

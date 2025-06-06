@@ -6,7 +6,7 @@ import {
     getUserIngresos,
     createUser,
     updateUser
-} from "../../controllers/UserController"; 
+} from "../../controllers/UserController";
 
 
 const router = Router()
@@ -20,9 +20,5 @@ router.get("/:id/ingresos", getUserIngresos);
 router.post("/", createUser);
 
 router.put("/:id", updateUser);
-
-// router.get("/pedidos/:id", getUserPedidos);
-
-// router.get("/ventas/:id", getUserVentas);
 
 export default router;

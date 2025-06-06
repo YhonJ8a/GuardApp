@@ -9,8 +9,9 @@ import {
     createResidente,
     createVehiculoResidente,
     updateResidente,
-    deleteResidente
-} from "../../controllers/ResidentesController"; 
+    deleteResidente,
+    getResidenteCc
+} from "../../controllers/ResidentesController";
 
 
 const router = Router()
@@ -18,6 +19,8 @@ const router = Router()
 router.get("/", allResidentes);
 
 router.get("/inactive", allResidentesInactive);
+
+router.get("/cc/:cc", getResidenteCc);
 
 router.get("/:id", getResidente);
 
