@@ -50,17 +50,19 @@ export const createIngreso = async (req: Request, res: Response): Promise<void> 
 
         let vehiculo = await vehiRepository.findOne({ where: { placa: placa } });
 
-        const newIngreso = ingresoRepository.create({
+        const DATA = vehiculo? {
+            residente,
+            usuario,
+            vehiculo,
+            accion: "INGRESO",
+            fecha_ingreso: new Date()
+        }:{
             residente,
             usuario,
             accion: "INGRESO",
             fecha_ingreso: new Date()
-        });
-
-
-        // if (vehiculo) {
-        //     newIngreso.vehiculo = vehiculo;
-        // }
+        };
+        const newIngreso = ingresoRepository.create(DATA);
 
         const savedIngreso = await ingresoRepository.save(newIngreso);
         res.status(201).json(savedIngreso);

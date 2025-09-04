@@ -3,8 +3,7 @@ import {
     PrimaryGeneratedColumn,
     Column,
     BaseEntity,
-    ManyToOne,
-    OneToOne
+    ManyToOne
 } from "typeorm";
 
 import { Residente } from "./Residente";
@@ -20,7 +19,7 @@ export class Ingreso extends BaseEntity {
     @ManyToOne(() => Residente, residente => residente.ingresos)
     residente!: Residente;
 
-    @OneToOne(() => Vehiculo, vehiculo => vehiculo.ingreso)
+    @ManyToOne(() => Vehiculo, vehiculo => vehiculo.ingreso)
     vehiculo!: Vehiculo;
 
     @Column({ nullable: false })

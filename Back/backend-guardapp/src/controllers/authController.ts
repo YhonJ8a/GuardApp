@@ -19,6 +19,7 @@ export const loginHandler = async (
 ): Promise<void> => {
     try {
         const { email, password } = req.body;
+        console.log(`aver con q llega el email ${email} y la contraseña ${password}`);
 
         if (!validateEmail(email)) {
             res.status(400).json({ message: "Email is not valid" });

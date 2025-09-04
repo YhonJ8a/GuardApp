@@ -46,7 +46,8 @@ export const getVehiculoPlaca = async (req: Request, res: Response): Promise<voi
     try {
         const { placa } = req.params;
         const residente = await vehiRepository
-            .findOne({ where: { placa: placa }});
+            .findOne({ where: { placa: placa },
+            relations: ['residente']});
         if (!residente) {
             res.status(404).json({ message: "Vehiculo no encontrado" });
             return;
